@@ -1,5 +1,6 @@
 package delivery;
 
+import com.google.gson.Gson;
 import com.sun.net.httpserver.HttpContext;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpServer;
@@ -7,6 +8,7 @@ import model.User;
 import service.SnService;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.InetSocketAddress;
 
@@ -48,7 +50,25 @@ public class HttpHandler {
     }
 
     private static void handleRequestSignup(HttpExchange exchange) throws IOException {
-        System.out.println(exchange.getHttpContext().getPath());
+        /**
+         * This function will receive a username and password, and will return a message containing
+         * if the process was done successfully or if there was an error.
+         */
+        // Get the body of the request, where the parameters are in format json
+        StringBuilder sb = new StringBuilder();
+        InputStream ios = exchange.getRequestBody();
+        int i;
+        while ((i = ios.read()) != -1) {
+            sb.append((char) i);
+        }
+
+        // And pass it to the service class
+        service.signup(sb.toString());
+
+
+
+
+
         String response = "Hi there signup!";
         exchange.sendResponseHeaders(200, response.getBytes().length);//response code and length
         OutputStream os = exchange.getResponseBody();

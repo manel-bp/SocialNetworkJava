@@ -1,5 +1,6 @@
 package service;
 
+import com.google.gson.Gson;
 import model.User;
 import repository.Singleton;
 
@@ -13,6 +14,14 @@ public class SnService {
 
     // Constructor
     public SnService(){}
+
+    public void signup(String body){
+        System.out.println(body);
+        Gson g = new Gson();
+        User p = g.fromJson(body, User.class);
+        System.out.println(p.getUsername());
+        System.out.println(p.getPassword());
+    }
 
     // Public methods
     public void addUser(User user){
