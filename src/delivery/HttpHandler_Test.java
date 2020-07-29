@@ -100,6 +100,50 @@ public class HttpHandler_Test {
 
     }
 
+    @Test
+    public void test_Login(){
+        // Create an instance of the HttpServer
+        new HttpHandler();
+        String params;
+        String resp;
+        JsonObject recvObj;
+        JsonObject targetObj;
+
+        // Try sending a username that does not exist yet
+        params = "{\"username\": \"manelbp\", \"password\": \"MySecretPass\"}";
+        resp = executePost("http://localhost:8050/login", params);
+        recvObj = new JsonParser().parse(resp).getAsJsonObject();
+
+        targetObj = new JsonObject();
+        targetObj.addProperty("code", Constants.ERROR_LOGIN);
+        targetObj.addProperty("message", Constants.ERROR_LOGIN_TEXT);
+
+        Assert.assertEquals(targetObj, recvObj);
+
+        // Now Sign up and login correctly
+        params = "{\"username\": \"manelbp\", \"password\": \"MySecretPass\"}";
+        resp = executePost("http://localhost:8050/signup", params);
+        recvObj = new JsonParser().parse(resp).getAsJsonObject();
+
+        targetObj = new JsonObject();
+        targetObj.addProperty("code", Constants.ERROR_SUCCESSFUL);
+        targetObj.addProperty("message", Constants.ERROR_SUCCESSFUL_TEXT);
+
+        Assert.assertEquals(targetObj, recvObj);
+
+        params = "{\"username\": \"manelbp\", \"password\": \"MySecretPass\"}";
+        resp = executePost("http://localhost:8050/login", params);
+        recvObj = new JsonParser().parse(resp).getAsJsonObject();
+        recvObj.remove("token");
+
+        targetObj = new JsonObject();
+        targetObj.addProperty("code", Constants.ERROR_SUCCESSFUL);
+        targetObj.addProperty("message", Constants.ERROR_SUCCESSFUL_TEXT);
+
+        Assert.assertEquals(targetObj, recvObj);
+
+    }
+
     public static String executePost(String targetURL, String urlParameters) {
         HttpURLConnection connection = null;
 
@@ -131,7 +175,7 @@ public class HttpHandler_Test {
             String line;
             while ((line = rd.readLine()) != null) {
                 response.append(line);
-                //response.append('\r');
+                response.append('\r');
             }
             rd.close();
 

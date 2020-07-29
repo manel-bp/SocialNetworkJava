@@ -14,6 +14,7 @@ public class Constants {
     public static final int ERROR_SUCCESSFUL = 0;
     public static final String ERROR_SUCCESSFUL_TEXT = "Request was processed successfully";
 
+    //Signup
     public static final int ERROR_USERNAME_TOO_SHORT = 100;
     public static final String ERROR_USERNAME_TOO_SHORT_TEXT = "ERROR: Please, enter a username containing 5 to 10 characters";
     public static final int ERROR_USERNAME_TOO_LONG = 101;
@@ -25,5 +26,9 @@ public class Constants {
     public static final String ERROR_PASSWORD_TOO_SHORT_TEXT = "ERROR: Please, enter a password between 8 and 12 alphanumeric characters";
     public static final int ERROR_PASSWORD_TOO_LONG = 111;
     public static final String ERROR_PASSWORD_TOO_LONG_TEXT = "ERROR: Please, enter a password between 8 and 12 alphanumeric characters";
-    
+
+    // Login
+    public static final int ERROR_LOGIN = 200;
+    public static final String ERROR_LOGIN_TEXT = "Error: Login failed. Check your username and password, or sign up";
+
 }

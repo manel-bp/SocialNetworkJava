@@ -36,6 +36,9 @@ public class HttpHandler {
         HttpContext context_signup = server.createContext("/signup");
         context_signup.setHandler(HttpHandler::handleRequestSignup);
 
+        HttpContext context_login = server.createContext("/login");
+        context_login.setHandler(HttpHandler::handleRequestLogin);
+
         HttpContext context_reqFriendship = server.createContext("/request-friendship");
         context_reqFriendship.setHandler(HttpHandler::handleRequestReqFriendship);
 
@@ -53,7 +56,7 @@ public class HttpHandler {
     private static void handleRequestSignup(HttpExchange exchange) throws IOException {
         /**
          * This function will receive a username and password, and will return a message containing
-         * if the process was done successfully or if there was an error.
+         * if the registration process was done successfully or if there was an error.
          */
         // Get the body of the request, where the parameters are in format json
         StringBuilder sb = new StringBuilder();
@@ -64,11 +67,30 @@ public class HttpHandler {
         }
 
         // And pass it to the service class
-        int error = service.signup(sb.toString());
-        JsonObject obj = new JsonObject();
-        obj.addProperty("code", error);
-        obj.addProperty("message", service.getErrorName(error));
-        String response = obj.toString();
+        String response = service.signup(sb.toString());
+
+        exchange.sendResponseHeaders(200, response.getBytes().length);//response code and length
+        OutputStream os = exchange.getResponseBody();
+        os.write(response.getBytes());
+        os.close();
+    }
+
+    private static void handleRequestLogin(HttpExchange exchange) throws IOException {
+        /**
+         * This function will receive a username and password, and will return a message containing
+         * if the login process was done successfully or if there was an error. A Token will be returned
+         * for the user to identify himself/herself
+         */
+        // Get the body of the request, where the parameters are in format json
+        StringBuilder sb = new StringBuilder();
+        InputStream ios = exchange.getRequestBody();
+        int i;
+        while ((i = ios.read()) != -1) {
+            sb.append((char) i);
+        }
+
+        // And pass it to the service class
+        String response = service.login(sb.toString());
 
         exchange.sendResponseHeaders(200, response.getBytes().length);//response code and length
         OutputStream os = exchange.getResponseBody();
