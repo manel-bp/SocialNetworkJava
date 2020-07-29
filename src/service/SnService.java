@@ -94,6 +94,7 @@ public class SnService {
                 buffer.append((char) randomLimitedInt);
             }
             String token = buffer.toString();
+            Singleton.getInstance().setLoginToken(user.getUsername(), token);
 
             // Generate response
             JsonObject obj = new JsonObject();

@@ -50,4 +50,21 @@ public class Singleton {
         }
         return false;
     }
+
+    public void setLoginToken(String username, String token){
+        for (User user : allUsers) {
+            if (user.getUsername().equals(username)) {
+                user.setToken(token);
+            }
+        }
+    }
+
+    public String getLoginToken(String username){
+        for (User user : allUsers) {
+            if (user.getUsername().equals(username)) {
+                return user.getToken();
+            }
+        }
+        return null;
+    }
 }

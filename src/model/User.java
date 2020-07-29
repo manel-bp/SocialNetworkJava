@@ -7,6 +7,7 @@ public class User {
     // Global variables
     private String username;
     private String password;
+    private String token;
 
     // Constructor including parameters
     public User(String username, String password){
@@ -29,5 +30,13 @@ public class User {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
     }
 }

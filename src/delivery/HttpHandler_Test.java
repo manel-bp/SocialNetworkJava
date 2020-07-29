@@ -141,7 +141,6 @@ public class HttpHandler_Test {
         targetObj.addProperty("message", Constants.ERROR_SUCCESSFUL_TEXT);
 
         Assert.assertEquals(targetObj, recvObj);
-
     }
 
     public static String executePost(String targetURL, String urlParameters) {
