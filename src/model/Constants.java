@@ -4,6 +4,12 @@ package model;
  * In this class we will have the constants used for all the project
  */
 public class Constants {
+    // Constants:
+    public static final int MIN_USERNAME_LENGTH = 5;
+    public static final int MAX_USERNAME_LENGTH = 10;
+    public static final int MIN_PASSWORD_LENGTH = 8;
+    public static final int MAX_PASSWORD_LENGTH = 12;
+
     // We are going to have an error code for each possible error
     public static final int ERROR_SUCCESSFUL = 0;
     public static final String ERROR_SUCCESSFUL_TEXT = "Request was processed successfully";

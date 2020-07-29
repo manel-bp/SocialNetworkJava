@@ -1,6 +1,7 @@
 package delivery;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import com.sun.net.httpserver.HttpContext;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpServer;
@@ -63,13 +64,12 @@ public class HttpHandler {
         }
 
         // And pass it to the service class
-        service.signup(sb.toString());
+        int error = service.signup(sb.toString());
+        JsonObject obj = new JsonObject();
+        obj.addProperty("code", error);
+        obj.addProperty("message", service.getErrorName(error));
+        String response = obj.toString();
 
-
-
-
-
-        String response = "Hi there signup!";
         exchange.sendResponseHeaders(200, response.getBytes().length);//response code and length
         OutputStream os = exchange.getResponseBody();
         os.write(response.getBytes());

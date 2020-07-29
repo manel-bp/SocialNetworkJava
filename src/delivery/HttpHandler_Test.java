@@ -1,5 +1,7 @@
 package delivery;
 
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import model.Constants;
 import org.junit.Assert;
 import org.junit.Test;
@@ -21,41 +23,84 @@ public class HttpHandler_Test {
         // Create an instance of the HttpServer
         new HttpHandler();
         String params;
-        int resp;
+        String resp;
+        JsonObject recvObj;
+        JsonObject targetObj;
 
         // Try sending a bad username (short)
         params = "{\"username\": \"man\", \"password\": \"MySecretPass\"}";
         resp = executePost("http://localhost:8050/signup", params);
-        Assert.assertEquals(Constants.ERROR_USERNAME_TOO_SHORT, resp);
+        recvObj = new JsonParser().parse(resp).getAsJsonObject();
+
+        targetObj = new JsonObject();
+        targetObj.addProperty("code", Constants.ERROR_USERNAME_TOO_SHORT);
+        targetObj.addProperty("message", Constants.ERROR_USERNAME_TOO_SHORT_TEXT);
+
+        Assert.assertEquals(targetObj, recvObj);
+
 
         // Try sending a bad username (long)
         params = "{\"username\": \"manelbenavides\", \"password\": \"MySecretPass\"}";
         resp = executePost("http://localhost:8050/signup", params);
-        Assert.assertEquals(Constants.ERROR_USERNAME_TOO_LONG, resp);
+        recvObj = new JsonParser().parse(resp).getAsJsonObject();
+
+        targetObj = new JsonObject();
+        targetObj.addProperty("code", Constants.ERROR_USERNAME_TOO_LONG);
+        targetObj.addProperty("message", Constants.ERROR_USERNAME_TOO_LONG_TEXT);
+
+        Assert.assertEquals(targetObj, recvObj);
+
 
         // Try sending a bad password (short)
         params = "{\"username\": \"manelbp\", \"password\": \"My\"}";
         resp = executePost("http://localhost:8050/signup", params);
-        Assert.assertEquals(Constants.ERROR_PASSWORD_TOO_SHORT, resp);
+        recvObj = new JsonParser().parse(resp).getAsJsonObject();
+
+        targetObj = new JsonObject();
+        targetObj.addProperty("code", Constants.ERROR_PASSWORD_TOO_SHORT);
+        targetObj.addProperty("message", Constants.ERROR_PASSWORD_TOO_SHORT_TEXT);
+
+        Assert.assertEquals(targetObj, recvObj);
+
 
         // Try sending a bad password (long)
         params = "{\"username\": \"manelbp\", \"password\": \"MySecretPassword\"}";
         resp = executePost("http://localhost:8050/signup", params);
-        Assert.assertEquals(Constants.ERROR_PASSWORD_TOO_LONG, resp);
+        recvObj = new JsonParser().parse(resp).getAsJsonObject();
+
+        targetObj = new JsonObject();
+        targetObj.addProperty("code", Constants.ERROR_PASSWORD_TOO_LONG);
+        targetObj.addProperty("message", Constants.ERROR_PASSWORD_TOO_LONG_TEXT);
+
+        Assert.assertEquals(targetObj, recvObj);
+
 
         // Try sending a correct signup
         params = "{\"username\": \"manelbp\", \"password\": \"MySecretPass\"}";
         resp = executePost("http://localhost:8050/signup", params);
-        Assert.assertEquals(Constants.ERROR_SUCCESSFUL, resp);
+        recvObj = new JsonParser().parse(resp).getAsJsonObject();
+
+        targetObj = new JsonObject();
+        targetObj.addProperty("code", Constants.ERROR_SUCCESSFUL);
+        targetObj.addProperty("message", Constants.ERROR_SUCCESSFUL_TEXT);
+
+        Assert.assertEquals(targetObj, recvObj);
+
 
         // Try sending a bad username (repeated)
         params = "{\"username\": \"manelbp\", \"password\": \"MySecretPass\"}";
         resp = executePost("http://localhost:8050/signup", params);
-        Assert.assertEquals(Constants.ERROR_USERNAME_REPEATED, resp);
+        recvObj = new JsonParser().parse(resp).getAsJsonObject();
+
+        targetObj = new JsonObject();
+        targetObj.addProperty("code", Constants.ERROR_USERNAME_REPEATED);
+        targetObj.addProperty("message", Constants.ERROR_USERNAME_REPEATED_TEXT);
+
+        Assert.assertEquals(targetObj, recvObj);
 
     }
 
-    public static int executePost(String targetURL, String urlParameters) {
+    public static String executePost(String targetURL, String urlParameters) {
         HttpURLConnection connection = null;
 
         try {
@@ -81,20 +126,20 @@ public class HttpHandler_Test {
 
             //Get Response
             InputStream is = connection.getInputStream();
-            int code = connection.getResponseCode();
             BufferedReader rd = new BufferedReader(new InputStreamReader(is));
             StringBuilder response = new StringBuilder(); // or StringBuffer if Java version 5+
             String line;
             while ((line = rd.readLine()) != null) {
                 response.append(line);
-                response.append('\r');
+                //response.append('\r');
             }
             rd.close();
-            //return response.toString();
-            return code;
+
+            return response.toString();
+
         } catch (Exception e) {
             e.printStackTrace();
-            return -1;
+            return null;
         } finally {
             if (connection != null) {
                 connection.disconnect();

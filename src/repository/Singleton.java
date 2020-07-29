@@ -1,5 +1,6 @@
 package repository;
 
+import model.Constants;
 import model.User;
 
 import java.util.ArrayList;
@@ -30,5 +31,14 @@ public class Singleton {
 
     public ArrayList<User> listUsers(){
         return allUsers;
+    }
+
+    public boolean exists(String username){
+        for (User user : allUsers) {
+            if (user.getUsername().equals(username)) {
+                return true;
+            }
+        }
+        return false;
     }
 }
