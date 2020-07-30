@@ -200,10 +200,27 @@ public class HttpHandler {
     }
 
     private static void handleRequestListFriends(HttpExchange exchange) throws IOException {
-        System.out.println(exchange.getHttpContext().getPath());
-        String response = "Hi there list!";
-        service.addUser(new User("hola", "adeu"));
-        service.listUsers();
+        /**
+         * This function will receive a login token identifier. It will return a message
+         * containing if the friendship declining process was done successfully or if
+         * there was an error. A list of friends will be added in the response
+         */
+        // Get the body of the request, where the parameters are in format json
+        StringBuilder sb = new StringBuilder();
+        InputStream ios = exchange.getRequestBody();
+        int i;
+        while ((i = ios.read()) != -1) {
+            sb.append((char) i);
+        }
+
+        // Parse information
+        JsonObject inObj = new JsonParser().parse(sb.toString()).getAsJsonObject();
+        String token = inObj.get("token").toString();
+        token = token.substring(1, token.length() - 1);
+
+        // And pass it to the service class
+        String response = service.listFriends(token);
+
         exchange.sendResponseHeaders(200, response.getBytes().length);//response code and length
         OutputStream os = exchange.getResponseBody();
         os.write(response.getBytes());

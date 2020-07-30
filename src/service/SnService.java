@@ -245,6 +245,28 @@ public class SnService {
         return response;
     }
 
+    public String listFriends(String token){
+        // Check possible errors
+        // The user exists (token is correct)
+        String username = Singleton.getInstance().getUsernameFromToken(token);
+        if (username == null){
+            JsonObject obj = new JsonObject();
+            obj.addProperty("code", Constants.ERROR_INCORRECT_TOKEN);
+            obj.addProperty("message", Constants.ERROR_INCORRECT_TOKEN_TEXT);
+            String response = obj.toString();
+            return response;
+        }
+
+        // If no errors were found, respond with the list of friends
+        String friends = Singleton.getInstance().getFriendsList(username).toString();
+        JsonObject obj = new JsonObject();
+        obj.addProperty("code", Constants.ERROR_SUCCESSFUL);
+        obj.addProperty("message", Constants.ERROR_SUCCESSFUL_TEXT);
+        obj.addProperty("friends", friends);
+        String response = obj.toString();
+        return response;
+    }
+
     // Public methods
     public void addUser(User user){
         Singleton.getInstance().addUser(user);

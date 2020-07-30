@@ -516,6 +516,164 @@ public class HttpHandler_Test {
         Assert.assertEquals(targetObj, recvObj);
     }
 
+    @Test
+    public void test_ListFriends(){
+        System.out.println("Testing list friends...");
+
+        // Create an instance of the HttpServer
+        new HttpHandler();
+        String params;
+        String resp;
+        JsonObject recvObj;
+        JsonObject targetObj;
+
+        // Sign up three users
+        params = "{\"username\": \"manelbp\", \"password\": \"MySecretPass\"}";
+        resp = executePost("http://localhost:8050/signup", params);
+        recvObj = new JsonParser().parse(resp).getAsJsonObject();
+
+        targetObj = new JsonObject();
+        targetObj.addProperty("code", Constants.ERROR_SUCCESSFUL);
+        targetObj.addProperty("message", Constants.ERROR_SUCCESSFUL_TEXT);
+
+        Assert.assertEquals(targetObj, recvObj);
+
+        params = "{\"username\": \"carlosrc\", \"password\": \"MySecretPass\"}";
+        resp = executePost("http://localhost:8050/signup", params);
+        recvObj = new JsonParser().parse(resp).getAsJsonObject();
+
+        targetObj = new JsonObject();
+        targetObj.addProperty("code", Constants.ERROR_SUCCESSFUL);
+        targetObj.addProperty("message", Constants.ERROR_SUCCESSFUL_TEXT);
+
+        Assert.assertEquals(targetObj, recvObj);
+
+        params = "{\"username\": \"marcvp\", \"password\": \"MySecretPass\"}";
+        resp = executePost("http://localhost:8050/signup", params);
+        recvObj = new JsonParser().parse(resp).getAsJsonObject();
+
+        targetObj = new JsonObject();
+        targetObj.addProperty("code", Constants.ERROR_SUCCESSFUL);
+        targetObj.addProperty("message", Constants.ERROR_SUCCESSFUL_TEXT);
+
+        Assert.assertEquals(targetObj, recvObj);
+
+        // Login to all three accounts
+        params = "{\"username\": \"manelbp\", \"password\": \"MySecretPass\"}";
+        resp = executePost("http://localhost:8050/login", params);
+        recvObj = new JsonParser().parse(resp).getAsJsonObject();
+
+        targetObj = new JsonObject();
+        targetObj.addProperty("code", Constants.ERROR_SUCCESSFUL);
+        targetObj.addProperty("message", Constants.ERROR_SUCCESSFUL_TEXT);
+        String userToken = recvObj.get("token").toString();
+        userToken = userToken.substring(1, userToken.length() - 1);
+        recvObj.remove("token");
+        Assert.assertEquals(targetObj, recvObj);
+
+        params = "{\"username\": \"carlosrc\", \"password\": \"MySecretPass\"}";
+        resp = executePost("http://localhost:8050/login", params);
+        recvObj = new JsonParser().parse(resp).getAsJsonObject();
+
+        targetObj = new JsonObject();
+        targetObj.addProperty("code", Constants.ERROR_SUCCESSFUL);
+        targetObj.addProperty("message", Constants.ERROR_SUCCESSFUL_TEXT);
+        String userToken2 = recvObj.get("token").toString();
+        userToken2 = userToken2.substring(1, userToken2.length() - 1);
+        recvObj.remove("token");
+        Assert.assertEquals(targetObj, recvObj);
+
+        params = "{\"username\": \"marcvp\", \"password\": \"MySecretPass\"}";
+        resp = executePost("http://localhost:8050/login", params);
+        recvObj = new JsonParser().parse(resp).getAsJsonObject();
+
+        targetObj = new JsonObject();
+        targetObj.addProperty("code", Constants.ERROR_SUCCESSFUL);
+        targetObj.addProperty("message", Constants.ERROR_SUCCESSFUL_TEXT);
+        String userToken3 = recvObj.get("token").toString();
+        userToken3 = userToken3.substring(1, userToken3.length() - 1);
+        recvObj.remove("token");
+        Assert.assertEquals(targetObj, recvObj);
+
+        // Try with invalid token
+        String fakeToken = "holaquetal";
+        params = "{\"token\": \"" + fakeToken + "\"}";
+        resp = executePost("http://localhost:8050/list-friends", params);
+        recvObj = new JsonParser().parse(resp).getAsJsonObject();
+
+        targetObj = new JsonObject();
+        targetObj.addProperty("code", Constants.ERROR_INCORRECT_TOKEN);
+        targetObj.addProperty("message", Constants.ERROR_INCORRECT_TOKEN_TEXT);
+
+        Assert.assertEquals(targetObj, recvObj);
+
+        // List friends (zero friends)
+        params = "{\"token\": \"" + userToken + "\"}";
+        resp = executePost("http://localhost:8050/list-friends", params);
+        recvObj = new JsonParser().parse(resp).getAsJsonObject();
+
+        targetObj = new JsonObject();
+        targetObj.addProperty("code", Constants.ERROR_SUCCESSFUL);
+        targetObj.addProperty("message", Constants.ERROR_SUCCESSFUL_TEXT);
+        targetObj.addProperty("friends", "[]");
+
+        Assert.assertEquals(targetObj, recvObj);
+
+        // Request friendships
+        params = "{\"token\": \"" + userToken + "\", \"targetUser\": \"carlosrc\"}";
+        resp = executePost("http://localhost:8050/request-friendship", params);
+        recvObj = new JsonParser().parse(resp).getAsJsonObject();
+
+        targetObj = new JsonObject();
+        targetObj.addProperty("code", Constants.ERROR_SUCCESSFUL);
+        targetObj.addProperty("message", Constants.ERROR_SUCCESSFUL_TEXT);
+
+        Assert.assertEquals(targetObj, recvObj);
+
+        params = "{\"token\": \"" + userToken + "\", \"targetUser\": \"marcvp\"}";
+        resp = executePost("http://localhost:8050/request-friendship", params);
+        recvObj = new JsonParser().parse(resp).getAsJsonObject();
+
+        targetObj = new JsonObject();
+        targetObj.addProperty("code", Constants.ERROR_SUCCESSFUL);
+        targetObj.addProperty("message", Constants.ERROR_SUCCESSFUL_TEXT);
+
+        Assert.assertEquals(targetObj, recvObj);
+
+        // Accept friendships
+        params = "{\"token\": \"" + userToken2 + "\", \"acceptedUser\": \"manelbp\"}";
+        resp = executePost("http://localhost:8050/accept-friendship", params);
+        recvObj = new JsonParser().parse(resp).getAsJsonObject();
+
+        targetObj = new JsonObject();
+        targetObj.addProperty("code", Constants.ERROR_SUCCESSFUL);
+        targetObj.addProperty("message", Constants.ERROR_SUCCESSFUL_TEXT);
+
+        Assert.assertEquals(targetObj, recvObj);
+
+        params = "{\"token\": \"" + userToken3 + "\", \"acceptedUser\": \"manelbp\"}";
+        resp = executePost("http://localhost:8050/accept-friendship", params);
+        recvObj = new JsonParser().parse(resp).getAsJsonObject();
+
+        targetObj = new JsonObject();
+        targetObj.addProperty("code", Constants.ERROR_SUCCESSFUL);
+        targetObj.addProperty("message", Constants.ERROR_SUCCESSFUL_TEXT);
+
+        Assert.assertEquals(targetObj, recvObj);
+
+        // List friends (all friends)
+        params = "{\"token\": \"" + userToken + "\"}";
+        resp = executePost("http://localhost:8050/list-friends", params);
+        recvObj = new JsonParser().parse(resp).getAsJsonObject();
+
+        targetObj = new JsonObject();
+        targetObj.addProperty("code", Constants.ERROR_SUCCESSFUL);
+        targetObj.addProperty("message", Constants.ERROR_SUCCESSFUL_TEXT);
+        targetObj.addProperty("friends", "[carlosrc, marcvp]");
+
+        Assert.assertEquals(targetObj, recvObj);
+    }
+
     public static String executePost(String targetURL, String urlParameters) {
         HttpURLConnection connection = null;
 
