@@ -147,7 +147,58 @@ public class SnService {
             return response;
         }
 
+        // Both users are not friends yet
+        if (Singleton.getInstance().existsFriendship(originUser, targetUser)){
+            JsonObject obj = new JsonObject();
+            obj.addProperty("code", Constants.ERROR_FRIENDSHIP_REQUEST_TO_A_FRIEND);
+            obj.addProperty("message", Constants.ERROR_FRIENDSHIP_REQUEST_TO_A_FRIEND_TEXT);
+            String response = obj.toString();
+            return response;
+        }
+
         Singleton.getInstance().addFriendshipRequest(originUser, targetUser);
+        JsonObject obj = new JsonObject();
+        obj.addProperty("code", Constants.ERROR_SUCCESSFUL);
+        obj.addProperty("message", Constants.ERROR_SUCCESSFUL_TEXT);
+        String response = obj.toString();
+        return response;
+    }
+
+    public String acceptFriendship(String token, String acceptedUser){
+        // Check possible errors
+        // The origin user exists (token is correct)
+        String originUser = Singleton.getInstance().getUsernameFromToken(token);
+        if (originUser == null){
+            JsonObject obj = new JsonObject();
+            obj.addProperty("code", Constants.ERROR_INCORRECT_TOKEN);
+            obj.addProperty("message", Constants.ERROR_INCORRECT_TOKEN_TEXT);
+            String response = obj.toString();
+            return response;
+        }
+
+        // The accepted user exists
+        if (!Singleton.getInstance().exists(acceptedUser)){
+            JsonObject obj = new JsonObject();
+            obj.addProperty("code", Constants.ERROR_INCORRECT_USERNAME);
+            obj.addProperty("message", Constants.ERROR_INCORRECT_USERNAME_TEXT);
+            String response = obj.toString();
+            return response;
+        }
+
+        // A friendship request already exists
+        if (!Singleton.getInstance().existsFriendshipRequest(originUser, acceptedUser)){
+            JsonObject obj = new JsonObject();
+            obj.addProperty("code", Constants.ERROR_FRIENDSHIP_REQUEST_DOESNT_EXIST);
+            obj.addProperty("message", Constants.ERROR_FRIENDSHIP_REQUEST_DOESNT_EXIST_TEXT);
+            String response = obj.toString();
+            return response;
+        }
+
+        // Remove the friendship request
+        Singleton.getInstance().removeFriendshipRequest(originUser, acceptedUser);
+        // Both become friends
+        Singleton.getInstance().addFriend(originUser, acceptedUser);
+        Singleton.getInstance().addFriend(acceptedUser, originUser);
         JsonObject obj = new JsonObject();
         obj.addProperty("code", Constants.ERROR_SUCCESSFUL);
         obj.addProperty("message", Constants.ERROR_SUCCESSFUL_TEXT);

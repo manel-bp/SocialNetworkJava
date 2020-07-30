@@ -40,4 +40,8 @@ public class Constants {
     public static final String ERROR_INCORRECT_FRIENDSHIP_REQUEST_TEXT = "ERROR: Target user and origin user are the same.";
     public static final int ERROR_FRIENDSHIP_REQUEST_REPEAT = 303;
     public static final String ERROR_FRIENDSHIP_REQUEST_REPEAT_TEXT = "ERROR: Friendship request is already waiting for an answer.";
+    public static final int ERROR_FRIENDSHIP_REQUEST_DOESNT_EXIST = 304;
+    public static final String ERROR_FRIENDSHIP_REQUEST_DOESNT_EXIST_TEXT = "ERROR: Friendship request does not exist";
+    public static final int ERROR_FRIENDSHIP_REQUEST_TO_A_FRIEND = 305;
+    public static final String ERROR_FRIENDSHIP_REQUEST_TO_A_FRIEND_TEXT = "ERROR: Friendship already exist between users";
 }

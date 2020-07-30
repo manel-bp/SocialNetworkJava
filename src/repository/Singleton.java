@@ -51,12 +51,14 @@ public class Singleton {
         return false;
     }
 
-    public void setLoginToken(String username, String token){
+    public boolean setLoginToken(String username, String token){
         for (User user : allUsers) {
             if (user.getUsername().equals(username)) {
                 user.setToken(token);
+                return true;
             }
         }
+        return false;
     }
 
     public String getLoginToken(String username){
@@ -90,11 +92,43 @@ public class Singleton {
         return false;
     }
 
-    public void addFriendshipRequest(String originUsername, String targetUsername){
+    public boolean existsFriendship(String originUser, String targetUser){
+        for (User user : allUsers) {
+            if (user.getUsername().equals(originUser)) {
+                // Check if origin user has a pending friendship request to the target user
+                return user.existsFriendshipRequest(targetUser);
+            }
+        }
+        return false;
+    }
+
+    public boolean addFriendshipRequest(String originUsername, String targetUsername){
         for (User user : this.allUsers) {
             if (user.getUsername().equals(targetUsername)) {
                 user.appendFriendshipRequest(originUsername);
+                return true;
             }
         }
+        return false;
+    }
+
+    public boolean removeFriendshipRequest(String originUser, String acceptedUser){
+        for (User user : allUsers) {
+            if (user.getUsername().equals(originUser)) {
+                user.removeFriendship(acceptedUser);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean addFriend(String originUser, String acceptedUser){
+        for (User user : allUsers) {
+            if (user.getUsername().equals(originUser)) {
+                user.addFriendship(acceptedUser);
+                return true;
+            }
+        }
+        return false;
     }
 }

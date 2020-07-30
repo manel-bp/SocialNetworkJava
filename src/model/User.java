@@ -11,7 +11,7 @@ public class User {
     private String username;
     private String password;
     private String token;
-    private ArrayList<String> friends;
+    private ArrayList<String> friends = new ArrayList<>();
     private ArrayList<String> friendshipRequests = new ArrayList<>();
 
     // Constructor including parameters
@@ -51,6 +51,14 @@ public class User {
 
     public boolean existsFriendshipRequest(String originUser){
         return this.friendshipRequests.contains(originUser);
+    }
+
+    public void removeFriendship(String removedUser){
+        this.friendshipRequests.remove(removedUser);
+    }
+
+    public void addFriendship(String newFriend){
+        this.friends.add(newFriend);
     }
 
     public ArrayList<String> getFriendshipRequests(){
