@@ -67,4 +67,34 @@ public class Singleton {
         }
         return null;
     }
+
+    public String getUsernameFromToken(String token){
+        for (User user : allUsers) {
+            if (user.getToken() != null) {
+                if (user.getToken().equals(token)) {
+                    return user.getUsername();
+                }
+            }
+        }
+        return null;
+    }
+
+    public boolean existsFriendshipRequest(String originUsername, String targetUsername){
+        // Look for the target user
+        for (User user : allUsers) {
+            if (user.getUsername().equals(targetUsername)) {
+                // Check if origin user has a pending friendship request to the target user
+                return user.existsFriendshipRequest(originUsername);
+            }
+        }
+        return false;
+    }
+
+    public void addFriendshipRequest(String originUsername, String targetUsername){
+        for (User user : this.allUsers) {
+            if (user.getUsername().equals(targetUsername)) {
+                user.appendFriendshipRequest(originUsername);
+            }
+        }
+    }
 }

@@ -31,4 +31,13 @@ public class Constants {
     public static final int ERROR_LOGIN = 200;
     public static final String ERROR_LOGIN_TEXT = "Error: Login failed. Check your username and password, or sign up";
 
+    //
+    public static final int ERROR_INCORRECT_TOKEN = 300;
+    public static final String ERROR_INCORRECT_TOKEN_TEXT = "ERROR: Invalid token.";
+    public static final int ERROR_INCORRECT_USERNAME = 301;
+    public static final String ERROR_INCORRECT_USERNAME_TEXT = "ERROR: Username does not exist.";
+    public static final int ERROR_INCORRECT_FRIENDSHIP_REQUEST = 302;
+    public static final String ERROR_INCORRECT_FRIENDSHIP_REQUEST_TEXT = "ERROR: Target user and origin user are the same.";
+    public static final int ERROR_FRIENDSHIP_REQUEST_REPEAT = 303;
+    public static final String ERROR_FRIENDSHIP_REQUEST_REPEAT_TEXT = "ERROR: Friendship request is already waiting for an answer.";
 }

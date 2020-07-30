@@ -2,6 +2,7 @@ package service;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import model.Constants;
 import model.User;
 import repository.Singleton;
@@ -18,10 +19,7 @@ public class SnService {
     // Constructor
     public SnService(){}
 
-    public String signup(String body){
-        // Parse information
-        Gson g = new Gson();
-        User user = g.fromJson(body, User.class);
+    public String signup(User user){
 
         // Check possible errors
         // Length of username
@@ -74,11 +72,7 @@ public class SnService {
         return response;
     }
 
-    public String login(String body){
-        // Parse information
-        Gson g = new Gson();
-        User user = g.fromJson(body, User.class);
-
+    public String login(User user){
         // Check possible errors
         // The user exists with the same username and password
         if (Singleton.getInstance().checkLogin(user.getUsername(), user.getPassword())){
@@ -111,6 +105,54 @@ public class SnService {
             String response = obj.toString();
             return response;
         }
+    }
+
+    public String requestFriendship(String token, String targetUser){
+
+        // Check possible errors
+        // The origin user exists (token is correct)
+        String originUser = Singleton.getInstance().getUsernameFromToken(token);
+        if (originUser == null){
+            JsonObject obj = new JsonObject();
+            obj.addProperty("code", Constants.ERROR_INCORRECT_TOKEN);
+            obj.addProperty("message", Constants.ERROR_INCORRECT_TOKEN_TEXT);
+            String response = obj.toString();
+            return response;
+        }
+
+        // The target user exists
+        if (!Singleton.getInstance().exists(targetUser)){
+            JsonObject obj = new JsonObject();
+            obj.addProperty("code", Constants.ERROR_INCORRECT_USERNAME);
+            obj.addProperty("message", Constants.ERROR_INCORRECT_USERNAME_TEXT);
+            String response = obj.toString();
+            return response;
+        }
+
+        // Target user is not the same one as the origin user
+        if (originUser.equals(targetUser)){
+            JsonObject obj = new JsonObject();
+            obj.addProperty("code", Constants.ERROR_INCORRECT_FRIENDSHIP_REQUEST);
+            obj.addProperty("message", Constants.ERROR_INCORRECT_FRIENDSHIP_REQUEST_TEXT);
+            String response = obj.toString();
+            return response;
+        }
+
+        // A pending friendship request does not exist yet
+        if (Singleton.getInstance().existsFriendshipRequest(originUser, targetUser)){
+            JsonObject obj = new JsonObject();
+            obj.addProperty("code", Constants.ERROR_FRIENDSHIP_REQUEST_REPEAT);
+            obj.addProperty("message", Constants.ERROR_FRIENDSHIP_REQUEST_REPEAT_TEXT);
+            String response = obj.toString();
+            return response;
+        }
+
+        Singleton.getInstance().addFriendshipRequest(originUser, targetUser);
+        JsonObject obj = new JsonObject();
+        obj.addProperty("code", Constants.ERROR_SUCCESSFUL);
+        obj.addProperty("message", Constants.ERROR_SUCCESSFUL_TEXT);
+        String response = obj.toString();
+        return response;
     }
 
     // Public methods

@@ -1,5 +1,8 @@
 package model;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * This class creates a User type for all classes that need to use this type.
  */
@@ -8,6 +11,8 @@ public class User {
     private String username;
     private String password;
     private String token;
+    private ArrayList<String> friends;
+    private ArrayList<String> friendshipRequests = new ArrayList<>();
 
     // Constructor including parameters
     public User(String username, String password){
@@ -38,5 +43,17 @@ public class User {
 
     public void setToken(String token) {
         this.token = token;
+    }
+
+    public void appendFriendshipRequest(String username){
+        this.friendshipRequests.add(username);
+    }
+
+    public boolean existsFriendshipRequest(String originUser){
+        return this.friendshipRequests.contains(originUser);
+    }
+
+    public ArrayList<String> getFriendshipRequests(){
+        return this.friendshipRequests;
     }
 }
