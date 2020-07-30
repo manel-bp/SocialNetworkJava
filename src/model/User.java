@@ -1,7 +1,6 @@
 package model;
 
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * This class creates a User type for all classes that need to use this type.
@@ -63,10 +62,6 @@ public class User {
 
     public void addFriendship(String newFriend){
         this.friends.add(newFriend);
-    }
-
-    public ArrayList<String> getFriendshipRequestsList(){
-        return this.friendshipRequests;
     }
 
     public ArrayList<String> getFriendsList(){

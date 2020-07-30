@@ -1,6 +1,5 @@
 package repository;
 
-import model.Constants;
 import model.User;
 
 import java.util.ArrayList;
@@ -59,15 +58,6 @@ public class Singleton {
             }
         }
         return false;
-    }
-
-    public String getLoginToken(String username){
-        for (User user : allUsers) {
-            if (user.getUsername().equals(username)) {
-                return user.getToken();
-            }
-        }
-        return null;
     }
 
     public String getUsernameFromToken(String token){
@@ -146,15 +136,6 @@ public class Singleton {
         for (User user : allUsers) {
             if (user.getUsername().equals(username)) {
                 return user.getFriendsList();
-            }
-        }
-        return null;
-    }
-
-    public ArrayList<String> getFriendRequestList(String username){
-        for (User user : allUsers) {
-            if (user.getUsername().equals(username)) {
-                return user.getFriendshipRequestsList();
             }
         }
         return null;
