@@ -53,6 +53,10 @@ public class User {
         return this.friendshipRequests.contains(originUser);
     }
 
+    public boolean existsFriendship(String originUser){
+        return this.friends.contains(originUser);
+    }
+
     public void removeFriendship(String removedUser){
         this.friendshipRequests.remove(removedUser);
     }
@@ -61,7 +65,11 @@ public class User {
         this.friends.add(newFriend);
     }
 
-    public ArrayList<String> getFriendshipRequests(){
+    public ArrayList<String> getFriendshipRequestsList(){
         return this.friendshipRequests;
+    }
+
+    public ArrayList<String> getFriendsList(){
+        return this.friends;
     }
 }

@@ -186,7 +186,8 @@ public class SnService {
         }
 
         // A friendship request already exists
-        if (!Singleton.getInstance().existsFriendshipRequest(originUser, acceptedUser)){
+        if (!Singleton.getInstance().doIHaveFriendshipRequest(originUser, acceptedUser)){
+            //if (!Singleton.getInstance().existsFriendshipRequest(originUser, acceptedUser)){
             JsonObject obj = new JsonObject();
             obj.addProperty("code", Constants.ERROR_FRIENDSHIP_REQUEST_DOESNT_EXIST);
             obj.addProperty("message", Constants.ERROR_FRIENDSHIP_REQUEST_DOESNT_EXIST_TEXT);

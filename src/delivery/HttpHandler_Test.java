@@ -287,7 +287,7 @@ public class HttpHandler_Test {
 
         Assert.assertEquals(targetObj, recvObj);
 
-        // Login to one of the accounts
+        // Login to both the accounts
         params = "{\"username\": \"manelbp\", \"password\": \"MySecretPass\"}";
         resp = executePost("http://localhost:8050/login", params);
         recvObj = new JsonParser().parse(resp).getAsJsonObject();
@@ -297,6 +297,18 @@ public class HttpHandler_Test {
         targetObj.addProperty("message", Constants.ERROR_SUCCESSFUL_TEXT);
         String userToken = recvObj.get("token").toString();
         userToken = userToken.substring(1, userToken.length() - 1);
+        recvObj.remove("token");
+        Assert.assertEquals(targetObj, recvObj);
+
+        params = "{\"username\": \"carlosrc\", \"password\": \"MySecretPass\"}";
+        resp = executePost("http://localhost:8050/login", params);
+        recvObj = new JsonParser().parse(resp).getAsJsonObject();
+
+        targetObj = new JsonObject();
+        targetObj.addProperty("code", Constants.ERROR_SUCCESSFUL);
+        targetObj.addProperty("message", Constants.ERROR_SUCCESSFUL_TEXT);
+        String userToken2 = recvObj.get("token").toString();
+        userToken2 = userToken2.substring(1, userToken2.length() - 1);
         recvObj.remove("token");
         Assert.assertEquals(targetObj, recvObj);
 
@@ -346,7 +358,7 @@ public class HttpHandler_Test {
         Assert.assertEquals(targetObj, recvObj);
 
         // Accept a friendship request correctly
-        params = "{\"token\": \"" + userToken + "\", \"acceptedUser\": \"carlosrc\"}";
+        params = "{\"token\": \"" + userToken2 + "\", \"acceptedUser\": \"manelbp\"}";
         resp = executePost("http://localhost:8050/accept-friendship", params);
         recvObj = new JsonParser().parse(resp).getAsJsonObject();
 
@@ -368,7 +380,74 @@ public class HttpHandler_Test {
         Assert.assertEquals(targetObj, recvObj);
     }
 
+    @Test
+    public void test_DeclineFriendshipRequest() {
+        System.out.println("Testing friendship decline...");
 
+        // Create an instance of the HttpServer
+        new HttpHandler();
+        String params;
+        String resp;
+        JsonObject recvObj;
+        JsonObject targetObj;
+
+        // Sign up two users
+        params = "{\"username\": \"manelbp\", \"password\": \"MySecretPass\"}";
+        resp = executePost("http://localhost:8050/signup", params);
+        recvObj = new JsonParser().parse(resp).getAsJsonObject();
+
+        targetObj = new JsonObject();
+        targetObj.addProperty("code", Constants.ERROR_SUCCESSFUL);
+        targetObj.addProperty("message", Constants.ERROR_SUCCESSFUL_TEXT);
+
+        Assert.assertEquals(targetObj, recvObj);
+
+        params = "{\"username\": \"carlosrc\", \"password\": \"MySecretPass\"}";
+        resp = executePost("http://localhost:8050/signup", params);
+        recvObj = new JsonParser().parse(resp).getAsJsonObject();
+
+        targetObj = new JsonObject();
+        targetObj.addProperty("code", Constants.ERROR_SUCCESSFUL);
+        targetObj.addProperty("message", Constants.ERROR_SUCCESSFUL_TEXT);
+
+        Assert.assertEquals(targetObj, recvObj);
+
+        // Login to one of the accounts
+        params = "{\"username\": \"manelbp\", \"password\": \"MySecretPass\"}";
+        resp = executePost("http://localhost:8050/login", params);
+        recvObj = new JsonParser().parse(resp).getAsJsonObject();
+
+        targetObj = new JsonObject();
+        targetObj.addProperty("code", Constants.ERROR_SUCCESSFUL);
+        targetObj.addProperty("message", Constants.ERROR_SUCCESSFUL_TEXT);
+        String userToken = recvObj.get("token").toString();
+        userToken = userToken.substring(1, userToken.length() - 1);
+        recvObj.remove("token");
+        Assert.assertEquals(targetObj, recvObj);
+
+        // Try with invalid token
+        String fakeToken = "holaquetal";
+        params = "{\"token\": \"" + fakeToken + "\", \"acceptedUser\": \"carlosrc\"}";
+        resp = executePost("http://localhost:8050/accept-friendship", params);
+        recvObj = new JsonParser().parse(resp).getAsJsonObject();
+
+        targetObj = new JsonObject();
+        targetObj.addProperty("code", Constants.ERROR_INCORRECT_TOKEN);
+        targetObj.addProperty("message", Constants.ERROR_INCORRECT_TOKEN_TEXT);
+
+        Assert.assertEquals(targetObj, recvObj);
+
+        // Try with invalid accepted user
+        params = "{\"token\": \"" + userToken + "\", \"acceptedUser\": \"marcvp\"}";
+        resp = executePost("http://localhost:8050/accept-friendship", params);
+        recvObj = new JsonParser().parse(resp).getAsJsonObject();
+
+        targetObj = new JsonObject();
+        targetObj.addProperty("code", Constants.ERROR_INCORRECT_USERNAME);
+        targetObj.addProperty("message", Constants.ERROR_INCORRECT_USERNAME_TEXT);
+
+        Assert.assertEquals(targetObj, recvObj);
+    }
 
     public static String executePost(String targetURL, String urlParameters) {
         HttpURLConnection connection = null;

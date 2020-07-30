@@ -92,11 +92,21 @@ public class Singleton {
         return false;
     }
 
+    public boolean doIHaveFriendshipRequest(String originUser, String acceptedUser){
+        for (User user : allUsers) {
+            if (user.getUsername().equals(originUser)) {
+                // Check if origin user has a pending friendship request to the target user
+                return user.existsFriendshipRequest(acceptedUser);
+            }
+        }
+        return false;
+    }
+
     public boolean existsFriendship(String originUser, String targetUser){
         for (User user : allUsers) {
             if (user.getUsername().equals(originUser)) {
                 // Check if origin user has a pending friendship request to the target user
-                return user.existsFriendshipRequest(targetUser);
+                return user.existsFriendship(targetUser);
             }
         }
         return false;
@@ -130,5 +140,23 @@ public class Singleton {
             }
         }
         return false;
+    }
+
+    public ArrayList<String> getFriendsList(String username){
+        for (User user : allUsers) {
+            if (user.getUsername().equals(username)) {
+                return user.getFriendsList();
+            }
+        }
+        return null;
+    }
+
+    public ArrayList<String> getFriendRequestList(String username){
+        for (User user : allUsers) {
+            if (user.getUsername().equals(username)) {
+                return user.getFriendshipRequestsList();
+            }
+        }
+        return null;
     }
 }
