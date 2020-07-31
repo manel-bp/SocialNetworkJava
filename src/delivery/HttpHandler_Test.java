@@ -338,7 +338,7 @@ public class HttpHandler_Test {
         System.out.println("List friends tested SUCCESSFULLY");
     }
 
-    public static String executePost(String targetURL, String urlParameters) {
+    public String executePost(String targetURL, String urlParameters) {
         HttpURLConnection connection = null;
 
         try {
