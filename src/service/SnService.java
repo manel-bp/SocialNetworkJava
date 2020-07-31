@@ -3,7 +3,7 @@ package service;
 import com.google.gson.JsonObject;
 import model.Constants;
 import model.User;
-import repository.Singleton;
+import repository.Repository;
 
 import java.util.Random;
 
@@ -13,8 +13,11 @@ import java.util.Random;
  */
 public class SnService {
 
+    Repository repository;
     // Constructor
-    public SnService(){}
+    public SnService(Repository repository){
+        this.repository = repository;
+    }
 
     public String signup(User user){
 
@@ -34,22 +37,21 @@ public class SnService {
         }
 
         // User already exists
-        if (Singleton.getInstance().exists(user.getUsername())){
+        if (repository.exists(user.getUsername())){
             return getResponse(Constants.ERROR_USERNAME_REPEATED, Constants.ERROR_USERNAME_REPEATED_TEXT);
         }
 
         // If none of the errors was found, sign up the person
-        Singleton.getInstance().addUser(user);
+        repository.addUser(user);
         return getResponse(Constants.ERROR_SUCCESSFUL, Constants.ERROR_SUCCESSFUL_TEXT);
     }
 
     public String login(User user){
         // If the user exists with the same username and password (login correct)
-        if (Singleton.getInstance().checkLogin(user.getUsername(), user.getPassword())){
+        if (repository.checkLogin(user.getUsername(), user.getPassword())){
             String token = getRandomToken();
-            Singleton.getInstance().setLoginToken(user.getUsername(), token);
+            repository.setLoginToken(user.getUsername(), token);
             return getResponseData(Constants.ERROR_SUCCESSFUL, Constants.ERROR_SUCCESSFUL_TEXT, token);
-
         }else{
             return getResponse(Constants.ERROR_LOGIN, Constants.ERROR_LOGIN_TEXT);
         }
@@ -58,13 +60,13 @@ public class SnService {
     public String requestFriendship(String token, String targetUser){
         // Check possible errors
         // The origin user exists (token is correct)
-        String originUser = Singleton.getInstance().getUsernameFromToken(token);
+        String originUser = repository.getUsernameFromToken(token);
         if (originUser == null){
             return getResponse(Constants.ERROR_INCORRECT_TOKEN, Constants.ERROR_INCORRECT_TOKEN_TEXT);
         }
 
         // The target user exists
-        if (!Singleton.getInstance().exists(targetUser)){
+        if (!repository.exists(targetUser)){
             return getResponse(Constants.ERROR_INCORRECT_USERNAME, Constants.ERROR_INCORRECT_USERNAME_TEXT);
         }
 
@@ -74,78 +76,80 @@ public class SnService {
         }
 
         // A pending friendship request does not exist yet
-        if (Singleton.getInstance().existsFriendshipRequest(originUser, targetUser)){
+        if (repository.existsFriendshipRequest(originUser, targetUser)){
             return getResponse(Constants.ERROR_FRIENDSHIP_REQUEST_REPEAT, Constants.ERROR_FRIENDSHIP_REQUEST_REPEAT_TEXT);
         }
 
         // Both users are not friends yet
-        if (Singleton.getInstance().existsFriendship(originUser, targetUser)){
+        if (repository.existsFriendship(originUser, targetUser)){
             return getResponse(Constants.ERROR_FRIENDSHIP_REQUEST_TO_A_FRIEND, Constants.ERROR_FRIENDSHIP_REQUEST_TO_A_FRIEND_TEXT);
         }
 
-        Singleton.getInstance().addFriendshipRequest(originUser, targetUser);
+        repository.addFriendshipRequest(originUser, targetUser);
         return getResponse(Constants.ERROR_SUCCESSFUL, Constants.ERROR_SUCCESSFUL_TEXT);
     }
 
     public String acceptFriendship(String token, String acceptedUser){
         // Check possible errors
         // The origin user exists (token is correct)
-        String originUser = Singleton.getInstance().getUsernameFromToken(token);
+        String originUser = repository.getUsernameFromToken(token);
         if (originUser == null){
             return getResponse(Constants.ERROR_INCORRECT_TOKEN, Constants.ERROR_INCORRECT_TOKEN_TEXT);
         }
 
         // The accepted user exists
-        if (!Singleton.getInstance().exists(acceptedUser)){
+        if (!repository.exists(acceptedUser)){
             return getResponse(Constants.ERROR_INCORRECT_USERNAME, Constants.ERROR_INCORRECT_USERNAME_TEXT);
         }
 
         // A friendship request already exists
-        if (!Singleton.getInstance().doIHaveFriendshipRequest(originUser, acceptedUser)){
+        if (!repository.doIHaveFriendshipRequest(originUser, acceptedUser)){
             return getResponse(Constants.ERROR_FRIENDSHIP_REQUEST_DOESNT_EXIST, Constants.ERROR_FRIENDSHIP_REQUEST_DOESNT_EXIST_TEXT);
         }
 
         // Remove the friendship request
-        Singleton.getInstance().removeFriendshipRequest(originUser, acceptedUser);
+        repository.removeFriendshipRequest(originUser, acceptedUser);
         // Both become friends
-        Singleton.getInstance().addFriend(originUser, acceptedUser);
-        Singleton.getInstance().addFriend(acceptedUser, originUser);
+        repository.addFriend(originUser, acceptedUser);
+        repository.addFriend(acceptedUser, originUser);
         return getResponse(Constants.ERROR_SUCCESSFUL, Constants.ERROR_SUCCESSFUL_TEXT);
     }
 
     public String declineFriendship(String token, String declinedUser){
         // Check possible errors
         // The origin user exists (token is correct)
-        String originUser = Singleton.getInstance().getUsernameFromToken(token);
+        String originUser = repository.getUsernameFromToken(token);
         if (originUser == null){
             return getResponse(Constants.ERROR_INCORRECT_TOKEN, Constants.ERROR_INCORRECT_TOKEN_TEXT);
         }
 
         // The declined user exists
-        if (!Singleton.getInstance().exists(declinedUser)){
+        if (!repository.exists(declinedUser)){
             return getResponse(Constants.ERROR_INCORRECT_USERNAME, Constants.ERROR_INCORRECT_USERNAME_TEXT);
         }
 
         // A friendship request already exists
-        if (!Singleton.getInstance().doIHaveFriendshipRequest(originUser, declinedUser)){
+        if (!repository.doIHaveFriendshipRequest(originUser, declinedUser)){
             return getResponse(Constants.ERROR_FRIENDSHIP_REQUEST_DOESNT_EXIST, Constants.ERROR_FRIENDSHIP_REQUEST_DOESNT_EXIST_TEXT);
         }
 
         // Remove the friendship request
-        Singleton.getInstance().removeFriendshipRequest(originUser, declinedUser);
+        repository.removeFriendshipRequest(originUser, declinedUser);
+
         return getResponse(Constants.ERROR_SUCCESSFUL, Constants.ERROR_SUCCESSFUL_TEXT);
     }
 
     public String listFriends(String token){
         // Check possible errors
         // The user exists (token is correct)
-        String username = Singleton.getInstance().getUsernameFromToken(token);
+        String username = repository.getUsernameFromToken(token);
         if (username == null){
             return getResponse(Constants.ERROR_INCORRECT_TOKEN, Constants.ERROR_INCORRECT_TOKEN_TEXT);
         }
 
         // If no errors were found, respond with the list of friends
-        String friends = Singleton.getInstance().getFriendsList(username).toString();
+        String friends = repository.getFriendsList(username).toString();
+
         return getResponseData(Constants.ERROR_SUCCESSFUL, Constants.ERROR_SUCCESSFUL_TEXT, friends);
     }
 
@@ -178,7 +182,7 @@ public class SnService {
                     (random.nextFloat() * (rightLimit - leftLimit + 1));
             buffer.append((char) randomLimitedInt);
         }
+
         return buffer.toString();
     }
-
 }

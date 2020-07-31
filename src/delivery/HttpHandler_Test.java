@@ -5,6 +5,8 @@ import com.google.gson.JsonParser;
 import model.Constants;
 import org.junit.Assert;
 import org.junit.Test;
+import repository.Repository;
+import service.SnService;
 
 import java.io.*;
 import java.net.HttpURLConnection;
@@ -15,6 +17,8 @@ import java.net.URL;
  */
 public class HttpHandler_Test {
 
+    Repository repository = new Repository();
+    SnService service = new SnService(repository);
     /**
      * Testing the signup consists on a stack of tests:
      */
@@ -22,7 +26,7 @@ public class HttpHandler_Test {
     public void test_Signup(){
         System.out.println("Testing signup...");
         // Create an instance of the HttpServer
-        new HttpHandler();
+        new HttpHandler(service);
         String params;
 
         // Try sending a bad username (short)
@@ -64,7 +68,7 @@ public class HttpHandler_Test {
         System.out.println("Testing login...");
 
         // Create an instance of the HttpServer
-        new HttpHandler();
+        new HttpHandler(service);
         String params;
 
         // Try sending a username that does not exist yet
@@ -89,7 +93,7 @@ public class HttpHandler_Test {
         System.out.println("Testing friendship request...");
 
         // Create an instance of the HttpServer
-        new HttpHandler();
+        new HttpHandler(service);
         String params;
 
         // Sign up two users
@@ -140,7 +144,7 @@ public class HttpHandler_Test {
         System.out.println("Testing friendship accept...");
 
         // Create an instance of the HttpServer
-        new HttpHandler();
+        new HttpHandler(service);
         String params;
 
         // Sign up two users
@@ -200,7 +204,7 @@ public class HttpHandler_Test {
         System.out.println("Testing friendship decline...");
 
         // Create an instance of the HttpServer
-        new HttpHandler();
+        new HttpHandler(service);
         String params;
 
         // Sign up two users
@@ -265,7 +269,7 @@ public class HttpHandler_Test {
         System.out.println("Testing list friends...");
 
         // Create an instance of the HttpServer
-        new HttpHandler();
+        new HttpHandler(service);
         String params;
         String listOfFriends;
 

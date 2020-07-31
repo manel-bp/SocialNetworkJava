@@ -20,10 +20,10 @@ import java.net.InetSocketAddress;
  * Its function is just receive a request and tell to the Service (the brain) to do whatever it needs to.
  */
 public class HttpHandler {
-    private static SnService service;
+    private SnService service;
 
-    public HttpHandler(){
-        service = new SnService();
+    public HttpHandler(SnService service){
+        this.service = service;
         try {
             runHttpServer();
             System.out.println("Up and running");
@@ -32,26 +32,26 @@ public class HttpHandler {
         }
     }
 
-    public static void runHttpServer() throws IOException {
+    public void runHttpServer() throws IOException {
         HttpServer server = HttpServer.create(new InetSocketAddress(Constants.PORT), 0);
 
         HttpContext context_signup = server.createContext(Constants.ENDPOINT_SIGNUP);
-        context_signup.setHandler(HttpHandler::handleRequestSignup);
+        context_signup.setHandler(this::handleRequestSignup);
 
         HttpContext context_login = server.createContext(Constants.ENDPOINT_LOGIN);
-        context_login.setHandler(HttpHandler::handleRequestLogin);
+        context_login.setHandler(this::handleRequestLogin);
 
         HttpContext context_reqFriendship = server.createContext(Constants.ENDPOINT_REQUEST_FRIENDSHIP);
-        context_reqFriendship.setHandler(HttpHandler::handleRequestReqFriendship);
+        context_reqFriendship.setHandler(this::handleRequestReqFriendship);
 
         HttpContext context_accFriendship = server.createContext(Constants.ENDPOINT_ACCEPT_FRIENDSHIP);
-        context_accFriendship.setHandler(HttpHandler::handleRequestAccFriendship);
+        context_accFriendship.setHandler(this::handleRequestAccFriendship);
 
         HttpContext context_decFriendship = server.createContext(Constants.ENDPOINT_DECLINE_FRIENDSHIP);
-        context_decFriendship.setHandler(HttpHandler::handleRequestDecFriendship);
+        context_decFriendship.setHandler(this::handleRequestDecFriendship);
 
         HttpContext context_listFriends = server.createContext(Constants.ENDPOINT_LIST_FRIENDS);
-        context_listFriends.setHandler(HttpHandler::handleRequestListFriends);
+        context_listFriends.setHandler(this::handleRequestListFriends);
         server.start();
     }
 
@@ -59,13 +59,12 @@ public class HttpHandler {
      * This function will receive a username and password, and will return a message containing
      * if the registration process was done successfully or if there was an error.
      */
-    private static void handleRequestSignup(HttpExchange exchange) throws IOException {
+    private void handleRequestSignup(HttpExchange exchange) throws IOException {
         String body = getRequestBody(exchange);
 
         // Parse information
-        Gson g = new Gson();
-        User aux = g.fromJson(body, User.class);
-        User user = new User(aux.getUsername(), aux.getPassword());
+        JsonObject inObj = new JsonParser().parse(body).getAsJsonObject();
+        User user = new User(getParameter(inObj, "username"), getParameter(inObj, "password"));
 
         // And pass it to the service class
         String response = service.signup(user);
@@ -78,13 +77,12 @@ public class HttpHandler {
      * if the login process was done successfully or if there was an error. A Token will be returned
      * for the user to identify himself/herself
      */
-    private static void handleRequestLogin(HttpExchange exchange) throws IOException {
+    private void handleRequestLogin(HttpExchange exchange) throws IOException {
         String body = getRequestBody(exchange);
 
         // Parse information
-        Gson g = new Gson();
-        User aux = g.fromJson(body, User.class);
-        User user = new User(aux.getUsername(), aux.getPassword());
+        JsonObject inObj = new JsonParser().parse(body).getAsJsonObject();
+        User user = new User(getParameter(inObj, "username"), getParameter(inObj, "password"));
 
         // And pass it to the service class
         String response = service.login(user);
@@ -97,7 +95,7 @@ public class HttpHandler {
      * request friendship. It will return a message containing
      * if the frienship request process was done successfully or if there was an error.
      */
-    private static void handleRequestReqFriendship(HttpExchange exchange) throws IOException {
+    private void handleRequestReqFriendship(HttpExchange exchange) throws IOException {
         String body = getRequestBody(exchange);
 
         // Parse information
@@ -116,7 +114,7 @@ public class HttpHandler {
      * request friendship. It will return a message containing
      * if the friendship accepting process was done successfully or if there was an error.
      */
-    private static void handleRequestAccFriendship(HttpExchange exchange) throws IOException {
+    private void handleRequestAccFriendship(HttpExchange exchange) throws IOException {
         String body = getRequestBody(exchange);
 
         // Parse information
@@ -135,7 +133,7 @@ public class HttpHandler {
      * request friendship. It will return a message containing
      * if the friendship declining process was done successfully or if there was an error.
      */
-    private static void handleRequestDecFriendship(HttpExchange exchange) throws IOException {
+    private void handleRequestDecFriendship(HttpExchange exchange) throws IOException {
         String body = getRequestBody(exchange);
 
         // Parse information
@@ -154,7 +152,7 @@ public class HttpHandler {
      * containing if the friendship declining process was done successfully or if
      * there was an error. A list of friends will be added in the response
      */
-    private static void handleRequestListFriends(HttpExchange exchange) throws IOException {
+    private void handleRequestListFriends(HttpExchange exchange) throws IOException {
         String body = getRequestBody(exchange);
 
         // Parse information
@@ -167,7 +165,7 @@ public class HttpHandler {
         sendResponse(exchange, response);
     }
 
-    private static String getRequestBody(HttpExchange exchange) throws IOException {
+    private String getRequestBody(HttpExchange exchange) throws IOException {
         // Get the body of the request, where the parameters are in format json
         StringBuilder sb = new StringBuilder();
         InputStream ios = exchange.getRequestBody();
@@ -179,14 +177,14 @@ public class HttpHandler {
         return sb.toString();
     }
 
-    private static void sendResponse(HttpExchange exchange, String response) throws IOException {
+    private void sendResponse(HttpExchange exchange, String response) throws IOException {
         exchange.sendResponseHeaders(200, response.getBytes().length);//response code and length
         OutputStream os = exchange.getResponseBody();
         os.write(response.getBytes());
         os.close();
     }
 
-    private static String getParameter(JsonObject obj, String parameter){
+    private String getParameter(JsonObject obj, String parameter){
         String value = obj.get(parameter).toString();
         return value.substring(1, value.length() - 1);
     }
