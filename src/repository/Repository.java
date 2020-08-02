@@ -5,7 +5,7 @@ import model.User;
 import java.util.ArrayList;
 
 /**
- * Since it's not necessary to use a Database to store data, data will be stored using a Singleton structure.
+ * Since it's not necessary to use a Database to store data, data will be stored in this repository class.
  */
 public class Repository {
     // Global variables
