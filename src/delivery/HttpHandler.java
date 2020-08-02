@@ -26,7 +26,7 @@ public class HttpHandler {
         this.service = service;
         try {
             runHttpServer();
-            System.out.println("Up and running");
+            System.out.println("Server is up and running");
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -64,7 +64,9 @@ public class HttpHandler {
 
         // Parse information
         JsonObject inObj = new JsonParser().parse(body).getAsJsonObject();
-        User user = new User(getParameter(inObj, "username"), getParameter(inObj, "password"));
+        User user = new User(
+                getParameter(inObj, Constants.PROPERTY_USERNAME_NAME),
+                getParameter(inObj, Constants.PROPERTY_PASSWORD_NAME));
 
         // And pass it to the service class
         String response = service.signup(user);
@@ -82,7 +84,10 @@ public class HttpHandler {
 
         // Parse information
         JsonObject inObj = new JsonParser().parse(body).getAsJsonObject();
-        User user = new User(getParameter(inObj, "username"), getParameter(inObj, "password"));
+        User user = new User(
+                getParameter(inObj, Constants.PROPERTY_USERNAME_NAME),
+                getParameter(inObj, Constants.PROPERTY_PASSWORD_NAME)
+        );
 
         // And pass it to the service class
         String response = service.login(user);
@@ -100,8 +105,8 @@ public class HttpHandler {
 
         // Parse information
         JsonObject inObj = new JsonParser().parse(body).getAsJsonObject();
-        String token = getParameter(inObj, "token");
-        String targetUser = getParameter(inObj, "targetUser");
+        String token = getParameter(inObj, Constants.PROPERTY_TOKEN_NAME);
+        String targetUser = getParameter(inObj, Constants.PROPERTY_TARGET_USER_NAME);
 
         // And pass it to the service class
         String response = service.requestFriendship(token, targetUser);
@@ -119,8 +124,8 @@ public class HttpHandler {
 
         // Parse information
         JsonObject inObj = new JsonParser().parse(body).getAsJsonObject();
-        String token = getParameter(inObj, "token");
-        String acceptedUser = getParameter(inObj, "acceptedUser");
+        String token = getParameter(inObj, Constants.PROPERTY_TOKEN_NAME);
+        String acceptedUser = getParameter(inObj, Constants.PROPERTY_ACCEPTED_USER_NAME);
 
         // And pass it to the service class
         String response = service.acceptFriendship(token, acceptedUser);
@@ -138,8 +143,8 @@ public class HttpHandler {
 
         // Parse information
         JsonObject inObj = new JsonParser().parse(body).getAsJsonObject();
-        String token = getParameter(inObj, "token");
-        String declinedUser = getParameter(inObj, "declinedUser");
+        String token = getParameter(inObj, Constants.PROPERTY_TOKEN_NAME);
+        String declinedUser = getParameter(inObj, Constants.PROPERTY_DECLINED_USER_NAME);
 
         // And pass it to the service class
         String response = service.declineFriendship(token, declinedUser);
@@ -157,7 +162,7 @@ public class HttpHandler {
 
         // Parse information
         JsonObject inObj = new JsonParser().parse(body).getAsJsonObject();
-        String token = getParameter(inObj, "token");
+        String token = getParameter(inObj, Constants.PROPERTY_TOKEN_NAME);
 
         // And pass it to the service class
         String response = service.listFriends(token);

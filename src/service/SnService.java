@@ -5,7 +5,7 @@ import model.Constants;
 import model.User;
 import repository.Repository;
 
-import java.util.Random;
+import java.util.UUID;
 
 /**
  * The Service class will parse the information, check for possible errors and implement
@@ -20,7 +20,6 @@ public class SnService {
     }
 
     public String signup(User user){
-
         // Check possible errors
         // Length of username
         if (user.getUsername().length() > Constants.MAX_USERNAME_LENGTH){
@@ -112,6 +111,7 @@ public class SnService {
         // Both become friends
         repository.addFriend(originUser, acceptedUser);
         repository.addFriend(acceptedUser, originUser);
+
         return getResponse(Constants.ERROR_SUCCESSFUL, Constants.ERROR_SUCCESSFUL_TEXT);
     }
 
@@ -155,34 +155,25 @@ public class SnService {
 
     private String getResponse(int code, String message){
         JsonObject obj = new JsonObject();
-        obj.addProperty("code", code);
-        obj.addProperty("message", message);
+        obj.addProperty(Constants.PROPERTY_CODE_NAME, code);
+        obj.addProperty(Constants.PROPERTY_MESSAGE_NAME, message);
+
         return obj.toString();
     }
 
     private String getResponseData(int code, String message, String data){
         // Generate response
         JsonObject obj = new JsonObject();
-        obj.addProperty("code", code);
-        obj.addProperty("message", message);
-        obj.addProperty("data", data);
+        obj.addProperty(Constants.PROPERTY_CODE_NAME, code);
+        obj.addProperty(Constants.PROPERTY_MESSAGE_NAME, message);
+        obj.addProperty(Constants.PROPERTY_DATA_NAME, data);
         String response = obj.toString();
+
         return response;
     }
 
     private String getRandomToken(){
         // Generate Token
-        int leftLimit = 97; // letter 'a'
-        int rightLimit = 122; // letter 'z'
-        int targetStringLength = 10;
-        Random random = new Random();
-        StringBuilder buffer = new StringBuilder(targetStringLength);
-        for (int i = 0; i < targetStringLength; i++) {
-            int randomLimitedInt = leftLimit + (int)
-                    (random.nextFloat() * (rightLimit - leftLimit + 1));
-            buffer.append((char) randomLimitedInt);
-        }
-
-        return buffer.toString();
+        return UUID.randomUUID().toString();
     }
 }

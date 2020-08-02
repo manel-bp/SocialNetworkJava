@@ -26,6 +26,16 @@ public class Constants {
     public static final String LONG_ENDPOINT_DECLINE_FRIENDSHIP = "http://localhost:" + PORT + ENDPOINT_DECLINE_FRIENDSHIP;
     public static final String LONG_ENDPOINT_LIST_FRIENDS = "http://localhost:" + PORT + ENDPOINT_LIST_FRIENDS;
 
+    public static final String PROPERTY_CODE_NAME = "code";
+    public static final String PROPERTY_MESSAGE_NAME = "message";
+    public static final String PROPERTY_DATA_NAME = "data";
+    public static final String PROPERTY_USERNAME_NAME = "username";
+    public static final String PROPERTY_PASSWORD_NAME = "password";
+    public static final String PROPERTY_TOKEN_NAME = "token";
+    public static final String PROPERTY_TARGET_USER_NAME = "targetUser";
+    public static final String PROPERTY_ACCEPTED_USER_NAME = "acceptedUser";
+    public static final String PROPERTY_DECLINED_USER_NAME = "declinedUser";
+
     // We are going to have an error code for each possible error
     public static final int ERROR_SUCCESSFUL = 0;
     public static final String ERROR_SUCCESSFUL_TEXT = "Request was processed successfully";
